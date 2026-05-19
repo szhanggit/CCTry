@@ -1,0 +1,52 @@
+@model Ecommerce.Web.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index">Products</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" asp-route-category="@Model.Category">@Model.Category</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+<div class="row g-5">
+    <div class="col-md-5 text-center">
+        <img src="~/images/placeholder.svg" class="img-fluid rounded shadow" alt="@Model.Name" style="max-height:380px;object-fit:cover;" />
+    </div>
+    <div class="col-md-7">
+        <span class="badge bg-secondary mb-2">@Model.Category</span>
+        <h2>@Model.Name</h2>
+        <h3 class="text-primary">@Model.Price.ToString("C")</h3>
+        <p class="text-muted">@Model.Description</p>
+
+        @if (Model.Stock > 0)
+        {
+            <p class="text-success"><strong>In Stock</strong> (@Model.Stock available)</p>
+            <div class="d-flex align-items-center gap-3 mt-3">
+                <label for="quantity" class="form-label mb-0">Qty:</label>
+                <input type="number" id="detail-quantity" class="form-control" value="1" min="1" max="@Model.Stock" style="width:80px" />
+                <button class="btn btn-dark btn-add-to-cart" data-product-id="@Model.Id" id="btn-detail-add">
+                    Add to Cart
+                </button>
+            </div>
+        }
+        else
+        {
+            <p class="text-danger fw-bold">Out of Stock</p>
+        }
+
+        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary mt-4">← Back to Products</a>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $('#btn-detail-add').click(function () {
+        var qty = parseInt($('#detail-quantity').val()) || 1;
+        addToCart(@Model.Id, qty);
+    });
+</script>
+}

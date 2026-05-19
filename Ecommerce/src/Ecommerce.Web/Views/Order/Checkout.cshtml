@@ -1,0 +1,120 @@
+@model Ecommerce.Web.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Checkout</h2>
+
+<div class="row g-4 mt-1">
+    <!-- Form -->
+    <div class="col-md-7">
+        <form asp-action="Checkout" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewContext.ModelState.IsValid ? "none" : "block")"></div>
+
+            <h5>Shipping Information</h5>
+            <div class="mb-3">
+                <label asp-for="CustomerName" class="form-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CustomerEmail" class="form-label"></label>
+                <input asp-for="CustomerEmail" class="form-control" />
+                <span asp-validation-for="CustomerEmail" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ShippingAddress" class="form-label"></label>
+                <input asp-for="ShippingAddress" class="form-control" />
+                <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
+            </div>
+            <div class="row">
+                <div class="col mb-3">
+                    <label asp-for="City" class="form-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger small"></span>
+                </div>
+                <div class="col mb-3">
+                    <label asp-for="PostCode" class="form-label"></label>
+                    <input asp-for="PostCode" class="form-control" />
+                    <span asp-validation-for="PostCode" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <h5 class="mt-2">Payment Method</h5>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="CreditCard" id="pmCard" checked />
+                    <label class="form-check-label" for="pmCard">Credit / Debit Card</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="PaymentMethod" value="PayPal" id="pmPaypal" />
+                    <label class="form-check-label" for="pmPaypal">PayPal</label>
+                </div>
+            </div>
+
+            <!-- Card placeholder fields -->
+            <div id="card-fields" class="border rounded p-3 bg-light mb-3">
+                <div class="mb-2">
+                    <label class="form-label small">Card Number</label>
+                    <input type="text" class="form-control" placeholder="•••• •••• •••• ••••" disabled />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label small">Expiry</label>
+                        <input type="text" class="form-control" placeholder="MM / YY" disabled />
+                    </div>
+                    <div class="col">
+                        <label class="form-label small">CVV</label>
+                        <input type="text" class="form-control" placeholder="•••" disabled />
+                    </div>
+                </div>
+                <p class="text-muted small mt-2 mb-0">Demo only — no real payment is processed.</p>
+            </div>
+
+            <div id="paypal-fields" class="border rounded p-3 bg-light mb-3" style="display:none">
+                <p class="mb-0">You will be redirected to PayPal to complete your payment. <span class="text-muted small">(Demo only)</span></p>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-lg w-100">Place Order</button>
+        </form>
+    </div>
+
+    <!-- Order summary -->
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Order Summary</h5>
+                <hr />
+                @foreach (var item in Model.Cart.Items)
+                {
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>@item.Name <span class="text-muted small">× @item.Quantity</span></span>
+                        <span>@item.Subtotal.ToString("C")</span>
+                    </div>
+                }
+                <hr />
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total</span>
+                    <span>@Model.Cart.TotalPrice.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(function () {
+    $('input[name="PaymentMethod"]').change(function () {
+        if ($(this).val() === 'CreditCard') {
+            $('#card-fields').show();
+            $('#paypal-fields').hide();
+        } else {
+            $('#card-fields').hide();
+            $('#paypal-fields').show();
+        }
+    });
+});
+</script>
+}

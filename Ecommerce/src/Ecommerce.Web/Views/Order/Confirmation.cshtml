@@ -1,0 +1,46 @@
+@model Ecommerce.Web.Models.Order
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<div class="text-center my-4">
+    <div class="display-1 text-success">✓</div>
+    <h2 class="mt-2">Thank you, @Model.CustomerName!</h2>
+    <p class="text-muted">Your order has been placed successfully.</p>
+    <p>Order Number: <strong class="text-dark">@Model.OrderNumber</strong></p>
+    <p class="small text-muted">A confirmation would be sent to <strong>@Model.CustomerEmail</strong>.</p>
+</div>
+
+<div class="row g-4 justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header fw-bold">Shipping Details</div>
+            <div class="card-body">
+                <p class="mb-1">@Model.ShippingAddress</p>
+                <p class="mb-1">@Model.City, @Model.PostCode</p>
+                <p class="mb-0 text-muted small">Payment: @Model.PaymentMethod</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">Items Ordered</div>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Name <span class="text-muted small">× @item.Quantity</span></span>
+                        <span>@item.Subtotal.ToString("C")</span>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between fw-bold">
+                    <span>Total</span>
+                    <span>@Model.Total.ToString("C")</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="text-center mt-4">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-dark btn-lg">Continue Shopping</a>
+        </div>
+    </div>
+</div>

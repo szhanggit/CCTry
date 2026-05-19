@@ -1,0 +1,146 @@
+[
+  {
+    "Id": 1,
+    "Name": "Wireless Noise-Cancelling Headphones",
+    "Description": "Premium over-ear headphones with active noise cancellation, 30-hour battery life, and foldable design.",
+    "Price": 149.99,
+    "ImageUrl": "/images/headphones.jpg",
+    "Category": "Electronics",
+    "Stock": 25
+  },
+  {
+    "Id": 2,
+    "Name": "Mechanical Keyboard",
+    "Description": "Compact TKL mechanical keyboard with Cherry MX Blue switches, RGB backlight, and USB-C connection.",
+    "Price": 89.99,
+    "ImageUrl": "/images/keyboard.jpg",
+    "Category": "Electronics",
+    "Stock": 40
+  },
+  {
+    "Id": 3,
+    "Name": "4K USB-C Monitor",
+    "Description": "27-inch 4K IPS display with USB-C power delivery, HDR support, and ultra-thin bezels.",
+    "Price": 399.99,
+    "ImageUrl": "/images/monitor.jpg",
+    "Category": "Electronics",
+    "Stock": 10
+  },
+  {
+    "Id": 4,
+    "Name": "Smart Watch",
+    "Description": "Fitness and health smartwatch with heart rate monitor, GPS, and 7-day battery life.",
+    "Price": 199.99,
+    "ImageUrl": "/images/smartwatch.jpg",
+    "Category": "Electronics",
+    "Stock": 30
+  },
+  {
+    "Id": 5,
+    "Name": "Men's Classic Oxford Shirt",
+    "Description": "100% cotton slim-fit Oxford shirt, available in multiple colours. Machine washable.",
+    "Price": 39.99,
+    "ImageUrl": "/images/oxford-shirt.jpg",
+    "Category": "Clothing",
+    "Stock": 80
+  },
+  {
+    "Id": 6,
+    "Name": "Women's Running Jacket",
+    "Description": "Lightweight wind-resistant running jacket with reflective strips and zip pockets.",
+    "Price": 59.99,
+    "ImageUrl": "/images/running-jacket.jpg",
+    "Category": "Clothing",
+    "Stock": 50
+  },
+  {
+    "Id": 7,
+    "Name": "Slim Chino Trousers",
+    "Description": "Stretch cotton chino trousers with slim fit. Perfect for office or casual wear.",
+    "Price": 44.99,
+    "ImageUrl": "/images/chinos.jpg",
+    "Category": "Clothing",
+    "Stock": 60
+  },
+  {
+    "Id": 8,
+    "Name": "Wool Blend Overcoat",
+    "Description": "Elegant mid-length overcoat in a warm wool blend. Single-breasted with side pockets.",
+    "Price": 129.99,
+    "ImageUrl": "/images/overcoat.jpg",
+    "Category": "Clothing",
+    "Stock": 20
+  },
+  {
+    "Id": 9,
+    "Name": "Clean Code",
+    "Description": "A handbook of agile software craftsmanship by Robert C. Martin. Essential reading for every developer.",
+    "Price": 34.99,
+    "ImageUrl": "/images/clean-code.jpg",
+    "Category": "Books",
+    "Stock": 100
+  },
+  {
+    "Id": 10,
+    "Name": "The Pragmatic Programmer",
+    "Description": "Your journey to mastery — classic advice on software development career and craft.",
+    "Price": 29.99,
+    "ImageUrl": "/images/pragmatic-programmer.jpg",
+    "Category": "Books",
+    "Stock": 75
+  },
+  {
+    "Id": 11,
+    "Name": "Design Patterns",
+    "Description": "Elements of reusable object-oriented software by the Gang of Four. The definitive patterns reference.",
+    "Price": 44.99,
+    "ImageUrl": "/images/design-patterns.jpg",
+    "Category": "Books",
+    "Stock": 55
+  },
+  {
+    "Id": 12,
+    "Name": "Bamboo Desk Organiser",
+    "Description": "Eco-friendly bamboo desktop organiser with 5 compartments for pens, cables, and stationery.",
+    "Price": 24.99,
+    "ImageUrl": "/images/desk-organiser.jpg",
+    "Category": "Home & Kitchen",
+    "Stock": 45
+  },
+  {
+    "Id": 13,
+    "Name": "Ceramic Pour-Over Coffee Set",
+    "Description": "Handcrafted ceramic pour-over dripper with matching carafe and 40 filters included.",
+    "Price": 49.99,
+    "ImageUrl": "/images/pour-over.jpg",
+    "Category": "Home & Kitchen",
+    "Stock": 35
+  },
+  {
+    "Id": 14,
+    "Name": "Non-Stick Frying Pan Set",
+    "Description": "3-piece non-stick frying pan set (20 cm, 24 cm, 28 cm) with heat-resistant handles. Induction compatible.",
+    "Price": 59.99,
+    "ImageUrl": "/images/frying-pans.jpg",
+    "Category": "Home & Kitchen",
+    "Stock": 40
+  },
+  {
+    "Id": 15,
+    "Name": "Scented Soy Candle Set",
+    "Description": "Set of 3 hand-poured soy wax candles in lavender, vanilla, and cedarwood scents.",
+    "Price": 29.99,
+    "ImageUrl": "/images/candles.jpg",
+    "Category": "Home & Kitchen",
+    "Stock": 70
+  },
+  {
+    "Id": 16,
+    "Name": "Portable Bluetooth Speaker",
+    "Description": "Waterproof IPX7 Bluetooth 5.0 speaker with 360° sound, 20-hour playtime, and built-in microphone.",
+    "Price": 79.99,
+    "ImageUrl": "/images/speaker.jpg",
+    "Category": "Electronics",
+    "Stock": 0
+  }
+]

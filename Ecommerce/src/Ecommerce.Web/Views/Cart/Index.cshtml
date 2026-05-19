@@ -1,0 +1,111 @@
+@model Ecommerce.Web.Models.Cart
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<h2>Your Cart</h2>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info mt-3">
+        Your cart is empty. <a asp-controller="Product" asp-action="Index">Continue shopping</a>.
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-md-8">
+            <table class="table align-middle" id="cart-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr id="cart-row-@item.ProductId">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="~/images/placeholder.svg" style="width:50px;height:50px;object-fit:cover;" class="rounded" alt="@item.Name" />
+                                    <span>@item.Name</span>
+                                </div>
+                            </td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td style="width:120px">
+                                <input type="number" class="form-control qty-input" value="@item.Quantity"
+                                       min="1" max="99" data-product-id="@item.ProductId" />
+                            </td>
+                            <td class="subtotal-cell" id="subtotal-@item.ProductId">@item.Subtotal.ToString("C")</td>
+                            <td>
+                                <button class="btn btn-outline-danger btn-sm btn-remove"
+                                        data-product-id="@item.ProductId">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <span>Total</span>
+                        <strong id="cart-total">@Model.TotalPrice.ToString("C")</strong>
+                    </div>
+                    <a asp-controller="Order" asp-action="Checkout" class="btn btn-dark w-100 mt-3">Proceed to Checkout</a>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+$(function () {
+    var debounceTimer;
+    $(document).on('change', '.qty-input', function () {
+        var input = $(this);
+        var productId = input.data('product-id');
+        var quantity = parseInt(input.val());
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            $.post('/Cart/Update', { productId: productId, quantity: quantity }, function (res) {
+                if (res.success) {
+                    if (quantity <= 0) {
+                        $('#cart-row-' + productId).fadeOut(function () { $(this).remove(); checkEmpty(); });
+                    } else {
+                        $('#subtotal-' + productId).text(res.subtotal);
+                        $('#cart-total').text(res.total);
+                        updateBadge(res.totalItems);
+                    }
+                }
+            });
+        }, 400);
+    });
+
+    $(document).on('click', '.btn-remove', function () {
+        var productId = $(this).data('product-id');
+        $.post('/Cart/Remove', { productId: productId }, function (res) {
+            if (res.success) {
+                $('#cart-row-' + productId).fadeOut(function () { $(this).remove(); checkEmpty(); });
+                $('#cart-total').text(res.total);
+                updateBadge(res.totalItems);
+            }
+        });
+    });
+
+    function checkEmpty() {
+        if ($('#cart-table tbody tr').length === 0) location.reload();
+    }
+});
+</script>
+}

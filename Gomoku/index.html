@@ -13,7 +13,7 @@
         }
 
         .board-wrapper {
-            background: #7a4d2a;
+            background: #4a4a4a;
             border-radius: 10px;
             padding: 10px;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
@@ -373,20 +373,20 @@ function render() {
 
 function drawBoard() {
     // Wood base
-    ctx.fillStyle = '#c8a96e';
+    ctx.fillStyle = '#c0c0c0';
     ctx.fillRect(0, 0, CSIZE, CSIZE);
 
     // Vignette
     const vg = ctx.createRadialGradient(CSIZE/2, CSIZE/2, CSIZE*0.05, CSIZE/2, CSIZE/2, CSIZE*0.75);
-    vg.addColorStop(0, 'rgba(255,215,130,0.18)');
-    vg.addColorStop(1, 'rgba(65,30,5,0.28)');
+    vg.addColorStop(0, 'rgba(255,255,255,0.15)');
+    vg.addColorStop(1, 'rgba(30,30,30,0.25)');
     ctx.fillStyle = vg;
     ctx.fillRect(0, 0, CSIZE, CSIZE);
 
     const end = PAD + (BOARD - 1) * CELL;
 
     // Grid lines
-    ctx.strokeStyle = '#7a4f1a';
+    ctx.strokeStyle = '#707070';
     ctx.lineWidth = 1;
     for (let i = 0; i < BOARD; i++) {
         const p = PAD + i * CELL;
@@ -395,12 +395,12 @@ function drawBoard() {
     }
 
     // Outer border (thicker)
-    ctx.strokeStyle = '#5a3a0a';
+    ctx.strokeStyle = '#505050';
     ctx.lineWidth = 2;
     ctx.strokeRect(PAD, PAD, (BOARD-1)*CELL, (BOARD-1)*CELL);
 
     // Star points
-    ctx.fillStyle = '#5a3a0a';
+    ctx.fillStyle = '#505050';
     for (const [sr, sc] of STARS) {
         ctx.beginPath();
         ctx.arc(PAD + sc*CELL, PAD + sr*CELL, 4, 0, Math.PI*2);
@@ -408,7 +408,7 @@ function drawBoard() {
     }
 
     // Coordinate labels
-    ctx.fillStyle  = '#5a3a0a';
+    ctx.fillStyle  = '#505050';
     ctx.font       = 'bold 11px monospace';
     ctx.textBaseline = 'middle';
     for (let i = 0; i < BOARD; i++) {

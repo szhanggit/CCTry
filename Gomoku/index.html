@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gomoku 五子棋</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .board-wrapper {
+            background: #7a4d2a;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        #game-canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            cursor: crosshair;
+            border-radius: 4px;
+        }
+
+        .side-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .section-label {
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #8899aa;
+            margin-bottom: 8px;
+        }
+
+        /* Stone dot used in UI labels */
+        .dot {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 5px;
+            flex-shrink: 0;
+        }
+        .dot-black { background: radial-gradient(circle at 35% 35%, #888, #000); }
+        .dot-white { background: radial-gradient(circle at 35% 35%, #fff, #aaa); border: 1px solid #999; }
+
+        /* Turn badge */
+        #turn-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: .95rem;
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background .25s, color .25s;
+        }
+
+        /* Score cards */
+        .score-card {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        .score-num {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+        }
+
+        /* Winner alert */
+        #winner-alert {
+            display: none;
+            animation: slideDown .35s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-game { width: 100%; margin-bottom: 8px; }
+
+        hr.dim { border-color: rgba(255, 255, 255, 0.12); margin: 14px 0; }
+
+        /* Rules card */
+        #rules-body .card {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navbar ───────────────────────────────────────────────── -->
+<nav class="navbar navbar-dark" style="background:#0d0d1a; border-bottom:1px solid rgba(255,255,255,0.07)">
+    <div class="container">
+        <span class="navbar-brand d-flex align-items-center gap-2">
+            <span style="font-size:1.4rem; line-height:1">&#9632;</span>
+            <strong style="font-size:1.25rem; letter-spacing:.06em">GOMOKU</strong>
+            <small class="text-muted" style="font-size:.82rem; font-weight:400">五子棋</small>
+        </span>
+    </div>
+</nav>
+
+<!-- ── Main ────────────────────────────────────────────────── -->
+<div class="container my-4">
+    <div class="row g-4 align-items-start justify-content-center">
+
+        <!-- Board -->
+        <div class="col-lg-8 text-center">
+            <div class="board-wrapper">
+                <canvas id="game-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="col-lg-4">
+            <div class="side-panel">
+
+                <!-- Turn indicator -->
+                <div class="section-label">Current Turn</div>
+                <div class="mb-3">
+                    <span id="turn-badge" class="bg-dark">
+                        <span class="dot dot-black"></span>
+                        <span id="turn-text" class="text-light">Black's Turn</span>
+                    </span>
+                </div>
+
+                <!-- Winner alert -->
+                <div id="winner-alert" class="alert alert-warning py-2 px-3 mb-0" role="alert">
+                    <strong id="winner-text"></strong>
+                </div>
+
+                <hr class="dim">
+
+                <!-- Scores -->
+                <div class="section-label">Score</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="score-card">
+                            <div class="d-flex align-items-center justify-content-center mb-1">
+                                <span class="dot dot-black"></span><small>Black</small>
+                            </div>
+                            <div class="score-num" id="score-black">0</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="score-card">
+                            <div class="d-flex align-items-center justify-content-center mb-1">
+                                <span class="dot dot-white"></span><small>White</small>
+                            </div>
+                            <div class="score-num" id="score-white">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="dim">
+
+                <!-- Buttons -->
+                <button id="new-game-btn" class="btn btn-primary btn-game">New Game</button>
+                <button id="undo-btn"     class="btn btn-outline-secondary btn-game" disabled>Undo Last Move</button>
+
+                <hr class="dim">
+
+                <!-- Rules -->
+                <button class="btn btn-outline-info btn-sm w-100"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#rules-body"
+                        aria-expanded="false">
+                    Rules / 规则
+                </button>
+                <div class="collapse mt-2" id="rules-body">
+                    <div class="card card-body small">
+                        <ul class="mb-0 ps-3">
+                            <li>Black moves first.</li>
+                            <li>Players alternate placing one stone per turn on any empty intersection.</li>
+                            <li>First to get <strong>5 or more in a row</strong> — horizontally, vertically, or diagonally — wins.</li>
+                            <li>If the board fills with no winner, the game is a draw.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Scripts ──────────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ── Constants ──────────────────────────────────────────────────────
+const BOARD  = 15;
+const CELL   = 40;
+const PAD    = 30;                              // space for coordinate labels
+const CSIZE  = PAD * 2 + CELL * (BOARD - 1);  // 620 px
+const STARS  = [[3,3],[3,11],[7,7],[11,3],[11,11]];
+const COLS   = 'ABCDEFGHIJKLMNO';
+
+// ── State ──────────────────────────────────────────────────────────
+let state, hoverCell;
+
+function freshState(keepScores) {
+    return {
+        grid:    Array.from({length: BOARD}, () => Array(BOARD).fill(0)),
+        player:  1,          // 1 = black, 2 = white
+        over:    false,
+        winner:  null,
+        history: [],         // [{r, c, player, wasWin}, ...]
+        scores:  keepScores || {black: 0, white: 0},
+        winLine: []
+    };
+}
+
+// ── Bootstrap ──────────────────────────────────────────────────────
+let canvas, ctx;
+
+$(function () {
+    canvas        = document.getElementById('game-canvas');
+    canvas.width  = CSIZE;
+    canvas.height = CSIZE;
+    ctx           = canvas.getContext('2d');
+
+    state     = freshState();
+    hoverCell = null;
+
+    render();
+    syncUI();
+
+    $(canvas)
+        .on('click',      onCanvasClick)
+        .on('mousemove',  onCanvasMove)
+        .on('mouseleave', () => { hoverCell = null; render(); });
+
+    $('#new-game-btn').on('click', onNewGame);
+    $('#undo-btn').on('click',     onUndo);
+});
+
+// ── User Actions ───────────────────────────────────────────────────
+
+function onNewGame() {
+    if (state.history.length > 0 && !confirm('Start a new game?')) return;
+    state     = freshState(state.scores);   // preserve scores
+    hoverCell = null;
+    $('#winner-alert').hide();
+    render();
+    syncUI();
+}
+
+function onCanvasClick(e) {
+    if (state.over) return;
+    const cell = evtToCell(e);
+    if (!cell || state.grid[cell.r][cell.c] !== 0) return;
+    placeStone(cell.r, cell.c);
+}
+
+function onCanvasMove(e) {
+    hoverCell = evtToCell(e);
+    render();
+}
+
+function onUndo() {
+    if (state.history.length === 0) return;
+    const m = state.history.pop();
+    state.grid[m.r][m.c] = 0;
+    state.player = m.player;
+    if (m.wasWin) {
+        m.player === 1 ? state.scores.black-- : state.scores.white--;
+    }
+    state.over    = false;
+    state.winner  = null;
+    state.winLine = [];
+    hoverCell     = null;
+    $('#winner-alert').hide();
+    render();
+    syncUI();
+}
+
+// ── Game Logic ─────────────────────────────────────────────────────
+
+function placeStone(r, c) {
+    const p = state.player;
+    state.grid[r][c] = p;
+
+    const win   = checkWin(r, c);
+    const wasWin = win !== null;
+    state.history.push({ r, c, player: p, wasWin });
+
+    if (wasWin) {
+        state.winLine = win;
+        state.over    = true;
+        state.winner  = p;
+        p === 1 ? state.scores.black++ : state.scores.white++;
+        render();
+        syncUI();
+        showResult((p === 1 ? 'Black' : 'White') + ' wins!');
+    } else if (boardFull()) {
+        state.over = true;
+        render();
+        showResult("It's a draw!");
+        syncUI();
+    } else {
+        state.player = p === 1 ? 2 : 1;
+        render();
+        syncUI();
+    }
+}
+
+function checkWin(r, c) {
+    for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
+        const line = buildLine(r, c, dr, dc);
+        if (line.length >= 5) return line;
+    }
+    return null;
+}
+
+function buildLine(r, c, dr, dc) {
+    const p   = state.grid[r][c];
+    const fwd = [], bk = [];
+    for (let i = 1; i < BOARD; i++) {
+        const nr = r + dr*i, nc = c + dc*i;
+        if (!ok(nr, nc) || state.grid[nr][nc] !== p) break;
+        fwd.push({r: nr, c: nc});
+    }
+    for (let i = 1; i < BOARD; i++) {
+        const nr = r - dr*i, nc = c - dc*i;
+        if (!ok(nr, nc) || state.grid[nr][nc] !== p) break;
+        bk.push({r: nr, c: nc});
+    }
+    return [...bk.reverse(), {r, c}, ...fwd];
+}
+
+function ok(r, c) { return r >= 0 && r < BOARD && c >= 0 && c < BOARD; }
+function boardFull() { return state.grid.every(row => row.every(v => v !== 0)); }
+
+// ── Rendering ──────────────────────────────────────────────────────
+
+function render() {
+    drawBoard();
+    drawStones();
+
+    // Last-move red dot
+    if (state.history.length > 0) {
+        const last = state.history[state.history.length - 1];
+        drawMarker(last.r, last.c);
+    }
+
+    // Winning line
+    if (state.winLine.length >= 5) drawWinLine(state.winLine);
+
+    // Hover ghost
+    if (hoverCell && !state.over && state.grid[hoverCell.r][hoverCell.c] === 0) {
+        drawStone(hoverCell.r, hoverCell.c, state.player, 0.30);
+    }
+}
+
+function drawBoard() {
+    // Wood base
+    ctx.fillStyle = '#c8a96e';
+    ctx.fillRect(0, 0, CSIZE, CSIZE);
+
+    // Vignette
+    const vg = ctx.createRadialGradient(CSIZE/2, CSIZE/2, CSIZE*0.05, CSIZE/2, CSIZE/2, CSIZE*0.75);
+    vg.addColorStop(0, 'rgba(255,215,130,0.18)');
+    vg.addColorStop(1, 'rgba(65,30,5,0.28)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, CSIZE, CSIZE);
+
+    const end = PAD + (BOARD - 1) * CELL;
+
+    // Grid lines
+    ctx.strokeStyle = '#7a4f1a';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < BOARD; i++) {
+        const p = PAD + i * CELL;
+        ctx.beginPath(); ctx.moveTo(p, PAD); ctx.lineTo(p, end); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(PAD, p); ctx.lineTo(end, p); ctx.stroke();
+    }
+
+    // Outer border (thicker)
+    ctx.strokeStyle = '#5a3a0a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(PAD, PAD, (BOARD-1)*CELL, (BOARD-1)*CELL);
+
+    // Star points
+    ctx.fillStyle = '#5a3a0a';
+    for (const [sr, sc] of STARS) {
+        ctx.beginPath();
+        ctx.arc(PAD + sc*CELL, PAD + sr*CELL, 4, 0, Math.PI*2);
+        ctx.fill();
+    }
+
+    // Coordinate labels
+    ctx.fillStyle  = '#5a3a0a';
+    ctx.font       = 'bold 11px monospace';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < BOARD; i++) {
+        const pos = PAD + i * CELL;
+        ctx.textAlign = 'center';
+        ctx.fillText(COLS[i], pos, PAD / 2);       // column letter at top
+        ctx.textAlign = 'right';
+        ctx.fillText(String(BOARD - i), PAD - 7, pos); // row number at left
+    }
+}
+
+function px(r, c) { return { x: PAD + c*CELL, y: PAD + r*CELL }; }
+
+function drawStone(r, c, player, alpha) {
+    const {x, y} = px(r, c);
+    const rad = CELL * 0.44;
+    ctx.save();
+    ctx.globalAlpha = alpha ?? 1;
+
+    const g = ctx.createRadialGradient(x - rad*0.30, y - rad*0.35, rad*0.05, x, y, rad);
+    if (player === 1) {
+        g.addColorStop(0, '#888');
+        g.addColorStop(0.4, '#222');
+        g.addColorStop(1, '#000');
+    } else {
+        g.addColorStop(0, '#fff');
+        g.addColorStop(0.5, '#e2e2e2');
+        g.addColorStop(1, '#aaa');
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, Math.PI*2);
+    ctx.fillStyle = g;
+    ctx.fill();
+
+    ctx.strokeStyle = player === 1 ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawStones() {
+    for (let r = 0; r < BOARD; r++)
+        for (let c = 0; c < BOARD; c++)
+            if (state.grid[r][c]) drawStone(r, c, state.grid[r][c]);
+}
+
+function drawMarker(r, c) {
+    const {x, y} = px(r, c);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#e74c3c';
+    ctx.fill();
+}
+
+function drawWinLine(cells) {
+    const a = px(cells[0].r,                cells[0].c);
+    const b = px(cells[cells.length-1].r,   cells[cells.length-1].c);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(231,76,60,0.88)';
+    ctx.lineWidth   = 5;
+    ctx.lineCap     = 'round';
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+    ctx.restore();
+}
+
+// ── UI Sync ────────────────────────────────────────────────────────
+
+function syncUI() {
+    const isBlack = state.player === 1;
+    const dotCls  = isBlack ? 'dot-black' : 'dot-white';
+    const label   = isBlack ? "Black's Turn" : "White's Turn";
+    const bgCls   = isBlack ? 'bg-dark' : 'bg-light';
+    const txtCls  = isBlack ? 'text-light' : 'text-dark';
+
+    $('#turn-badge')
+        .attr('class', bgCls)
+        .html(`<span class="dot ${dotCls}"></span><span class="${txtCls}">${label}</span>`);
+
+    $('#score-black').text(state.scores.black);
+    $('#score-white').text(state.scores.white);
+    $('#undo-btn').prop('disabled', state.history.length === 0);
+}
+
+function showResult(msg) {
+    $('#winner-text').text(msg);
+    $('#winner-alert').show();
+}
+
+// ── Coordinate Helper ──────────────────────────────────────────────
+
+function evtToCell(e) {
+    const rect   = canvas.getBoundingClientRect();
+    const scaleX = canvas.width  / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const cx = (e.clientX - rect.left) * scaleX;
+    const cy = (e.clientY - rect.top)  * scaleY;
+    const c  = Math.round((cx - PAD) / CELL);
+    const r  = Math.round((cy - PAD) / CELL);
+    return ok(r, c) ? {r, c} : null;
+}
+</script>
+</body>
+</html>

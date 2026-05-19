@@ -1,0 +1,84 @@
+@model IEnumerable<Ecommerce.Web.Models.Product>
+@{
+    ViewData["Title"] = "Products";
+    var categories = ViewBag.Categories as IReadOnlyList<string> ?? new List<string>();
+    string? keyword = ViewBag.Keyword;
+    string? category = ViewBag.Category;
+}
+
+<div class="row g-4">
+    <!-- Sidebar filters -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title fw-bold">Filter by Category</h6>
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <a asp-controller="Product" asp-action="Index" asp-route-keyword="@keyword"
+                           class="text-decoration-none @(category == null ? "fw-bold text-dark" : "text-muted")">All</a>
+                    </li>
+                    @foreach (var cat in categories)
+                    {
+                        <li class="mt-1">
+                            <a asp-controller="Product" asp-action="Index"
+                               asp-route-keyword="@keyword" asp-route-category="@cat"
+                               class="text-decoration-none @(category == cat ? "fw-bold text-dark" : "text-muted")">@cat</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product grid -->
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                @if (!string.IsNullOrEmpty(category)) { <text>@category</text> }
+                else { <text>All Products</text> }
+                <small class="text-muted">(@Model.Count() items)</small>
+            </h5>
+            @if (!string.IsNullOrEmpty(keyword))
+            {
+                <span>Results for: <strong>"@keyword"</strong>
+                    <a asp-controller="Product" asp-action="Index" asp-route-category="@category" class="ms-2 text-muted small">Clear</a>
+                </span>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">No products found. <a asp-controller="Product" asp-action="Index">View all products</a>.</div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                @foreach (var product in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <img src="~/images/placeholder.svg" class="card-img-top product-img" alt="@product.Name" />
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-secondary mb-1">@product.Category</span>
+                                <h6 class="card-title">@product.Name</h6>
+                                <p class="card-text text-muted small flex-grow-1">@product.Description.Substring(0, Math.Min(80, product.Description.Length))…</p>
+                                <p class="text-primary fw-bold mb-2">@product.Price.ToString("C")</p>
+                                @if (product.Stock == 0)
+                                {
+                                    <span class="badge bg-danger mb-2">Out of Stock</span>
+                                }
+                                <div class="d-flex gap-2">
+                                    <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.Id"
+                                       class="btn btn-outline-secondary btn-sm flex-grow-1">Details</a>
+                                    <button class="btn btn-dark btn-sm flex-grow-1 btn-add-to-cart"
+                                            data-product-id="@product.Id"
+                                            @(product.Stock == 0 ? "disabled" : "")>Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

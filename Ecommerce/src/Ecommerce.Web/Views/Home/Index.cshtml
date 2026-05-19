@@ -1,0 +1,37 @@
+@model IEnumerable<Ecommerce.Web.Models.Product>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero -->
+<div class="p-5 mb-4 bg-dark text-white rounded-3">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">Welcome to ShopDotNet</h1>
+        <p class="col-md-8 fs-5">Discover great products across Electronics, Clothing, Books, and more.</p>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-warning btn-lg">Shop Now</a>
+    </div>
+</div>
+
+<!-- Featured Products -->
+<h2 class="mb-3">Featured Products</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    @foreach (var product in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="~/images/placeholder.svg" class="card-img-top product-img" alt="@product.Name" />
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-secondary mb-1">@product.Category</span>
+                    <h6 class="card-title">@product.Name</h6>
+                    <p class="text-primary fw-bold mt-auto mb-2">@product.Price.ToString("C")</p>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.Id"
+                           class="btn btn-outline-secondary btn-sm flex-grow-1">Details</a>
+                        <button class="btn btn-dark btn-sm flex-grow-1 btn-add-to-cart"
+                                data-product-id="@product.Id">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

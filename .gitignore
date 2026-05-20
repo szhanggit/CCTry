@@ -55,3 +55,11 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Local commands/scripts folder
+Commands/
+/Ecommerce/.vs/Ecommerce/FileContentIndex/22471b4d-e4c5-43d5-ae01-9c45a853f036.vsidx
+/Ecommerce/.vs/Ecommerce/FileContentIndex/7904ba7e-50e6-4fb8-9fd2-583ee45d3e68.vsidx
+/Ecommerce/.vs/Ecommerce/FileContentIndex/bbea05ea-168d-43b7-9e46-734df061c49b.vsidx
+/Ecommerce/.vs/Ecommerce/v17/.suo
+/Ecommerce/.vs/Ecommerce/v17/DocumentLayout.json

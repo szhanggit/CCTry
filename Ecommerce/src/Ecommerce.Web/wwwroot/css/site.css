@@ -11,6 +11,8 @@ body { margin-bottom: 0; }
 
 .navbar-brand { font-size: 1.4rem; letter-spacing: 0.5px; }
 
+.bg-deep-blue { background-color: #003366 !important; }
+
 .card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
 .card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12) !important; }
 

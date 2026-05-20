@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git *)"
+      "Bash(git *)",
+      "mcp__github-server__search_repositories",
+      "mcp__github-server__list_pull_requests"
     ]
   }
 }
